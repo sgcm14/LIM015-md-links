@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "jest"
+    "test": "jest  --coverage"
   },
   "repository": {
     "type": "git",
@@ -29,6 +29,8 @@
   },
   "homepage": "https://github.com/sgcm14/LIM015-md-links#readme",
   "dependencies": {
-    "jest": "^27.0.6"
+    "colors": "^1.4.0",
+    "jest": "^27.0.6",
+    "markdown-it": "^12.2.0"
   }
 }
