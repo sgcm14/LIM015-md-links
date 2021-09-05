@@ -1,15 +1,42 @@
-module.exports = () => {
+#!/usr/bin/env node
+
+/* module.exports = () => {
   // ...
-};
+}; */
 
-const fs = require('fs');
+const { mdLinks } = require('./md-links');
 
-console.log('hola');
-const md= fs.readFileSync('./pruebaDocs/leer.md','utf8');
-console.log(`esto es md:\n`,md);
+// validaciones:
+// 1.- si el path es null
+// 2.- si el archivo existe
 
-const txt= fs.readFileSync('./pruebaDocs/contenido.txt','utf8');
-console.log(`esto es txt:\n`,txt);
+mdLinks('./pruebaDocs/')
+.then(resolve => {
+  console.log(resolve);
+}).catch(err => console.log(err));
 
-const readme= fs.readFileSync('readme.md','utf8');
-console.log(`esto es readme:\n`,readme);
+/*
+mdLinks('C:/files/leer.md')
+.then(resolve => {
+  console.log(resolve);
+}).catch(err => console.log(err));
+
+mdLinks('./pruebaDocs/')
+.then(resolve => {
+  console.log(resolve);
+}).catch(err => console.log(err));
+
+mdLinks('./pruebaDocs/contenido.txt')
+.then(resolve => {
+  console.log(resolve);
+}).catch(err => console.log(err));
+
+mdLinks(null)
+.then(resolve => {
+  console.log(resolve);
+}).catch(err => console.log(err)); 
+
+mdLinks('./pruebaDocs/')
+.then(resolve => {
+  console.log(resolve);
+}).catch(err => console.log(err)); */
