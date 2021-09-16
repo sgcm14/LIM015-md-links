@@ -2,16 +2,16 @@ module.exports = () => {
   // ...
 };
 
-// read file
-// const fs = require('fs');
+read file
+const fs = require('fs');
 
-// fs.readFile('./README.md', 'utf8', (err, data) => {
-//   if (err) {
-//     console.error(err);
-//     return;
-//   }
-//   console.log(data);
-// });
+fs.readFile('./README.md', 'utf8', (err, data) => {
+  if (err) {
+    console.error(err);
+    return;
+  }
+  console.log(data);
+});
 
 // To access path
 const path = require('path');
