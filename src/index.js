@@ -1,10 +1,8 @@
-module.exports = () => {
-  // ...
-};
-
-read file
+const path = require('path');
 const fs = require('fs');
+const fetch = require('node-fetch');
 
+//read file
 fs.readFile('./README.md', 'utf8', (err, data) => {
   if (err) {
     console.error(err);
@@ -13,8 +11,11 @@ fs.readFile('./README.md', 'utf8', (err, data) => {
   console.log(data);
 });
 
+//to access the file if it exists BOOLEAN
+const pathExists = path => fs.existsSync(path);
+
 // To access path
-const path = require('path');
+
 //ruta relative
 const route = 'README.md';
 //ruta absolute
