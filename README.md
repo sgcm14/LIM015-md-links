@@ -126,7 +126,7 @@ consideración en peculiaridades del lenguaje, convenciones y buenas prácticas.
 sgcm14-mdlinks es un CLI que verifica los links que contienen archivos.md, reporta estadísticas de los links y si estan rotos.
 
 ```js
-$ npm install --global sgcm14-mdlinks
+$ npm install sgcm14-mdlinks
 ```
 Para acceder se debe importar con   `require('sgcm14-mdlinks')`.
 
@@ -182,13 +182,13 @@ mdLinks("./some/example.md", { validate: true })
   })
   .catch(console.error);
 
-mdLinks("./some/dir")
+mdLinks("./some/dir/")
   .then((links) => {
     // => [{ href, text, file }, ...]
   })
   .catch(console.error);
 
-  mdLinks("./some/dir", { validate: true })
+  mdLinks("./some/dir/", { validate: true })
   .then((links) => {
     // => [{ href, text, file, status, statusText }, ...]
   })

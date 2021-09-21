@@ -1,13 +1,14 @@
 {
   "name": "sgcm14-mdlinks",
   "version": "0.1.0",
-  "description": "verifica los links que contienen archivos.md, reporta estadísticas de los links y si estan rotos",
-  "main": "index.js",
+  "description": "libreria que verifica los links que contienen archivos.md, reporta estadísticas de los links y si estan rotos",
+  "main": "src/md-links.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "test": "jest --verbose --coverage"
+    "test": "jest --verbose --coverage",
+    "start": "node index"
   },
   "repository": {
     "type": "git",

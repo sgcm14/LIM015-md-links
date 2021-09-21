@@ -33,14 +33,11 @@ const argv = yargs(hideBin(process.argv)).option('validate', {
 //------------------------------------------------------------CLI-------------------------------------------------------------------------
 
 const pathreceived = process.argv[2];
-//const validate = argv.validate; //--validate -> true
-//const stats = argv.stats; // --stats
 console.log(messageWelcome);
-//if (argv.validate)  {
+
   if (argv.validate && !argv.stats)  {
   mdLinks(pathreceived, { validate: true }) //true
   .then(resolve => {
-    //console.log(resolve);
     resolve.map((objeto) => {
       console.log(`${objeto.file}  ${objeto.href.blue}  ${objeto.statusText.yellow}  ${objeto.status}  ${objeto.text.slice(0, 50).green}`);
     })
