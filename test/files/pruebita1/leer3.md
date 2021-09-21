@@ -1,0 +1,2 @@
+- [Arreglos3](https://curriculum.laboratoria.la/es/topics/javascript)
+- [Array3 - MDN](https://developer.mozilla.org/es/docs/Web/JavaScript/Reference)

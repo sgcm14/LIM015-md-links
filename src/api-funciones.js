@@ -2,7 +2,6 @@ const fs = require('fs');
 const path = require('path');
 const MarkdownIt = require('markdown-it'),
 md = new MarkdownIt();
-require('colors');
 const fetch = require('node-fetch');
 
 // console.log(path.dirname(pathReceived)); // te devuelve el directorio
@@ -14,7 +13,7 @@ const pathResult = (pathReceived) => {
   return path.resolve(pathReceived);
 }
 
-// si la ruta es absoluta o relativa
+// si la ruta es absoluta
 const pathAbsolute = (pathReceived) => {
   // const result = path.normalize(pathReceived);
   return path.isAbsolute(pathReceived);
@@ -33,11 +32,12 @@ const fileMd = (pathReceived) => {
 }
 
 // valida si la ruta existe
-const validatePath = (pathReceived) => {
+const isPathValid = (pathReceived) => {
   try {
     if (fs.existsSync(pathReceived)) {
       return true;
     }
+    // return false;
   } catch (error) {
     return false;
   }
@@ -57,7 +57,6 @@ const isFile = (pathReceived) => {
 // si es directorio
 const isFolder = (pathReceived) => {
   try {
-    // let isDirExists = fs.existsSync(pathReceived) && fs.lstatSync(dirPath).isDirectory();
     if (fs.statSync(pathReceived).isDirectory()) {
       return true;
     } 
@@ -69,47 +68,57 @@ const isFolder = (pathReceived) => {
 // valida el Link
 const checkLink = (link, callback) => {
   fetch(link)
-    .then(sLinks => {
-      let obj = {
+    .then(response => {
+      /* const obj = {
         href: link.href, //destructuracion para los nombres
         text: link.text,
         file: link.file,
-        status: sLinks.status, // status 500
-        statusText: sLinks.statusText // 
-      };
+        status: response.status, // status 500
+        statusText: response.statusText
+      }; */
+      const obj = {
+        ...link,
+        status: response.status,
+        statusText: response.statusText
+      }
       callback(obj);
-    }).catch(err => {
-      //console.log(err); // HAY QUE MANEJAR Q OCURRE CUANDO NO ENTRA Aqui
-      let obj = {
+    }).catch(err => { // HAY QUE MANEJAR Q OCURRE CUANDO NO ENTRA Aqui
+      // console.log(err); 
+      /* const obj = {
         href: link.href,
         text: link.text,
         file: link.file,
         status: 500,
         statusText: 'FAIL'
-      };
+      }; */
+      const obj = {
+        ...link,
+        status: 500,
+        statusText: 'FAIL'
+      }
       callback(obj);
     });
 }
 
 const statusLinks = (links, callback) =>{
-  let newLinks = [];
+  const newLinks = [];
   let j = 0;
   links.forEach(element => {
-    //console.log(checkLink(e, newLink => {newLink}));
+    // console.log(checkLink(e, newLink => {newLink}));
     checkLink(element, (newLink) => {
       j++;
-      //console.log('j='+j);
+      // console.log('j='+j);
       newLinks.push(newLink);
       if(links.length === j) {
         callback(newLinks);
       }
-    });  
+    });
   });  
 }
 
 // lee el archivo
 const fileRead = (pathReceived) => {
-  let links = [];
+  const links = [];
   if (fileMd(pathReceived)){
     const file = fs.readFileSync(pathReceived, 'utf8');
     const fileParse = renderMdtoHTML(file);
@@ -122,8 +131,7 @@ const fileRead = (pathReceived) => {
     }
     
     while((result = regExp.exec(fileParse)) !== null) {
-      // console.log(result);
-      let obj = {
+      const obj = {
         href: result[0,3],
         text: result[0,4],
         file: pathReceived
@@ -135,7 +143,7 @@ const fileRead = (pathReceived) => {
 }
 
 // lee el directorio
-const dirRead = (pathReceived) => {
+const extractLinks = (pathReceived) => {
   const dir = fs.readdirSync(pathReceived);
   let links = [];
   // recorrer dir con for each (if archivo => new path a fileREad(newPath) = array links push retorne links
@@ -151,11 +159,12 @@ const dirRead = (pathReceived) => {
     } else {
         newPath = newPath + '/';
       if(isFolder(newPath)) {
-        //newPath = './pruebaDocs/pruebita/'
-        const folderLinks = dirRead(newPath);
-        //console.log(folderLinks);
+        // newPath = './pruebaDocs/pruebita/'
+        const folderLinks = extractLinks(newPath);
+        // console.log(folderLinks);
         if(folderLinks.length > 0) {
-          folderLinks.forEach((element) => links.push(element));
+          // folderLinks.forEach((element) => links.push(element));
+          links = [...folderLinks,...links];
         }
       }
     }
@@ -171,46 +180,17 @@ const formatDirRead = (pathReceived) => {
    *    [{linksfolder1_1}],[{linksfolder1_2}],[{linksfolder2_1}]
    * ] => [{linksfolder1_1},{linksfolder1_2},{linksfolder2_1}]
    */
-  const linksDir = dirRead(pathReceived);
-  //links = linksDir.flat();
-  linksDir.forEach(element => {
+  const linksDir = extractLinks(pathReceived);
+  /* linksDir.forEach(element => {
     element.forEach(e => {
       links.push(e);
     });
-  });
+  }); */
+  links = linksDir.flat();
   return links;
-  //console.log(links);
 }
 
-const mdLinks = (pathReceived, options) => {
-  const promise = new Promise((resolve, reject) => {
-    if (pathReceived) {
-      pathResult(pathReceived); //la ruta del archivo
-      let links = [];
-      if(validatePath(pathReceived)) {       
-        if(isFolder(pathReceived)) { // si es directorio *
-          links = formatDirRead(pathReceived); // el directorio leido
-        } else if(isFile(pathReceived)) { // si es archivo *
-          links = fileRead(pathReceived); // el archivo leido
-        }
-        if (options && options.validate === true) { //opciones de VALIDATE *
-          //console.log('options.validate true = '+options.validate);
-          statusLinks(links,(newLinks) => {
-            resolve(newLinks);            
-          });
-        } else {
-          //console.log('options.validate false');
-          resolve(links);
-        }
-        //resolve(links);
-      } else {
-        reject('La ruta del archivo o directorio no existe'.red);
-      }
-    } else {
-      reject('Ingrese la ruta del archivo o directorio'.red);
-    }
-  });
-  return promise;
-}
-
-module.exports = {mdLinks}
+module.exports = {
+  pathResult, pathAbsolute, renderMdtoHTML, fileMd, isPathValid, isFile, isFolder, checkLink,
+  statusLinks, fileRead, extractLinks, formatDirRead
+};
