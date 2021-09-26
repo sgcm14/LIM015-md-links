@@ -28,5 +28,8 @@
   },
   "bin": {
     "mdLinks": "index.js"
+  },
+  "dependencies": {
+    "marked": "^3.0.4"
   }
 }
