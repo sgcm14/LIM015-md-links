@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs');
+const { link } = require('fs/promises');
 const userPath = process.argv[2];
 
 
@@ -11,13 +12,13 @@ const resolvePathA = (route) => path.isAbsolute(route) ? route : path.resolve(ro
 
 //To access the file if it exists BOOLEAN
 function pathExists(userPath) {
-  return fs.existsSync(userPath);
+  return fs.existsSync(userPath)
 }
 
 //To detec if path is a file or not BOOLEAN
 function findDirectory(userPath) {
-  return fs.statSync(userPath).isDirectory();
-};
+  return fs.statSync(userPath).isDirectory()
+}
 
 //To read and find file and directory
 const readFileAndDirectory = (userPath) => {
@@ -40,7 +41,7 @@ const readFileAndDirectory = (userPath) => {
 
 //To extract the links
 const extractTheLinks = (userPath) => {
-  const arryLinks = []
+  const arrayLinks = []
   const regExFile = /\[(.*)\]( *)\(((((https?:\/\/)|(http?:\/\/)|(www\.))[^\s\n)]+)(?=\)))\)/gi
   const regExCorchetes = /\[(.*?)\]/gi
   const regExUrl = /(((https?:\/\/)|(http?:\/\/)|(www\.))[^\s\n)]+)(?=\))/gi
@@ -56,12 +57,47 @@ const extractTheLinks = (userPath) => {
           text,
           file
         }
-        arryLinks.push(linkObj)
+        arrayLinks.push(linkObj)
       }
     }
   })
-  return arryLinks
+  return arrayLinks
 }
 //console.log(extractTheLinks(userPath))
-console.log(extractTheLinks(userPath))
+//console.log(extractTheLinks(userPath))
 //C:\\Users\\Usuario\\Documents\\LABORATORIA\\LIM015-md-links\\src
+//To validate the options
+const confirmOptions = (links) => {
+  const statusLinks = links.map((element) => //it will return me a neww array
+  fetch(element.href)
+  .then(response => { //this content the code of status answer
+    if((response.status >= 200) && (response.status <= 399)){
+      return{
+        href: element.href,
+        text: (element.text.substring(0, 50)),
+        path: element.file,
+        status: response.status,
+        statusText: 'OK'
+      }
+    } else if((response.status < 200) || (response.status >= 400)) {
+      return{
+        href: element.href,
+        text: (element.text.substring(0, 50)),
+        path: element.file,
+        status: response.status,
+        statusText: 'Fail'
+      }
+  }})
+  .catch((err) => {
+    return{
+      href: element.href,
+      text: (element.text.substring(0, 50)),
+      path: element.file,
+      status: 404,
+      statusText: 'Fail'
+    }
+  })
+  )
+  return Promise.all(statusLinks)
+}
+console.log(confirmOptions(userPath))
