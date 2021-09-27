@@ -64,7 +64,6 @@ const extractTheLinks = (userPath) => {
   return arrayLinks
 }
 //console.log(extractTheLinks(userPath))
-//console.log(extractTheLinks(userPath))
 //C:\\Users\\Usuario\\Documents\\LABORATORIA\\LIM015-md-links\\src
 //To validate the options
 const confirmOptions = (links) => {
@@ -93,7 +92,7 @@ const confirmOptions = (links) => {
       href: element.href,
       text: (element.text.substring(0, 50)),
       path: element.file,
-      status: 404,
+      status: 'There was a problem with the Fetch request. ' + err,
       statusText: 'Fail'
     }
   })
@@ -101,3 +100,13 @@ const confirmOptions = (links) => {
   return Promise.all(statusLinks)
 }
 console.log(confirmOptions(userPath))
+
+module.exports = {
+  tobeAbsolute,
+  resolvePathA,
+  pathExists,
+  findDirectory,
+  readFileAndDirectory,
+  extractTheLinks,
+  confirmOptions,
+};
