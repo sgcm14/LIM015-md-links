@@ -79,7 +79,7 @@ const confirmOptions = (links) => {
       .then((response) => {
         const objResponse = {
           href: element.href,
-          text: element.text,
+          text: (element.text.substring(0, 50)),
           path: element.file,
           status: response.status,
           statusText:
@@ -90,7 +90,7 @@ const confirmOptions = (links) => {
       .catch((err) => {
         const objErr = {
           href: element.href,
-          text: element.text,
+          text: (element.text.substring(0, 50)),
           path: element.file,
           status: "There was a problem with the Fetch request. " + err,
           statusText: "Fail",
@@ -105,12 +105,13 @@ const confirmOptions = (links) => {
   });
 };
 confirmOptions(linksObject)
-// module.exports = {
-//   tobeAbsolute,
-//   resolvePathA,
-//   pathExists,
-//   findDirectory,
-//   readFileAndDirectory,
-//   extractTheLinks,
-//   confirmOptions,
-// };
+
+module.exports = {
+  tobeAbsolute,
+  resolvePathA,
+  pathExists,
+  findDirectory,
+  readFileAndDirectory,
+  extractTheLinks,
+  confirmOptions,
+};
