@@ -30,6 +30,7 @@
     "mdLinks": "index.js"
   },
   "dependencies": {
-    "marked": "^3.0.4"
+    "marked": "^3.0.4",
+    "node-fetch": "^2.6.0"
   }
 }
