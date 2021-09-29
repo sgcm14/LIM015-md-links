@@ -4,20 +4,21 @@ const {
   tobeAbsolute,
   resolvePathA,
   pathExists,
+  findDirectory,
   readFileAndDirectory,
-  extractTheLinks
-} = require('./api')
+  extractTheLinks,
+  confirmOptions
+} = require('./api.js')
 
 const mdLinks = (path) => {
   return new Promise((resolve, reject) => {
     if (pathExists(path)) {
       if (tobeAbsolute(path)) {
         const fileMD = readFileAndDirectory(path)
-        console.log(fileMD)
-        fileMD.forEach((element) => {
-          extractTheLinks(element)
+        fileMD.forEach((md) => {
+          const fileLinks = extractTheLinks(md)
+          console.log(fileLinks)
         })
-        // const fileLinks = extractTheLinks(fileMD)
         // resolve(fileLinks)
         // console.log(extractTheLinks(fileMD))
         // confirmOptions(fileLinks).then(resolve)
@@ -33,7 +34,10 @@ const mdLinks = (path) => {
     }
   })
 }
-mdLinks('C:\\Users\\Usuario\\Documents\\LABORATORIA\\LIM015-md-links\\src').then((res) => {
+
+mdLinks(
+  'C:\\Users\\Usuario\\Documents\\LABORATORIA\\LIM015-md-links\\src'
+).then((res) => {
   console.log(res)
 })
 

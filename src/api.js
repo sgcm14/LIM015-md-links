@@ -1,8 +1,9 @@
+/* eslint-disable no-unused-vars */
 const path = require('path')
 const fs = require('fs')
-// const route = process.argv[2]
 const fetch = require('node-fetch')
 const marked = require('marked')
+// const route = process.argv[2]
 
 // To convert the path to absolute
 const tobeAbsolute = (route) => path.isAbsolute(route)
@@ -35,10 +36,13 @@ const readFileAndDirectory = (route) => {
         newArray.push(joinArray)
       }
     })
+  } else if (path.extname(route) === '.md') {
+    newArray.push(resolvePathA(route))
   }
+
   return newArray
 }
-// console.log(readFileAndDirectory('C:\\Users\\Usuario\\Documents\\LABORATORIA\\LIM015-md-links\\src'))
+// console.log(readFileAndDirectory('C:\\Users\\Usuario\\Documents\\LABORATORIA\\LIM015-md-links\\src\\File\\File2\\example2.md'))
 
 const lookFile = (route) => fs.readFileSync(route).toString()
 
@@ -47,24 +51,26 @@ const extractTheLinks = (route) => {
   const arrayObj = []
   const renderer = new marked.Renderer() // to cacth the information to pass html
   readFileAndDirectory(route).forEach((file) => {
-    const readFileMD = lookFile(file)
     renderer.link = (href, title, text) => {
-      const linkObj = {
+      arrayObj.push({
         href: href,
-        text: text,
+        title: text,
         file: file
-      }
-      arrayObj.push(linkObj)
+      })
     }
-    marked(readFileMD, { renderer })
+    marked(lookFile(file), { renderer })
   })
-  return arrayObj
+  const filteredLinks = arrayObj.filter(url => url.href.slice(0, 4) === 'http')
+  return filteredLinks
 }
 
-// const linksObject = extractTheLinks(
-//   'C:\\Users\\Usuario\\Documents\\LABORATORIA\\LIM015-md-links\\src'
-// )
-// console.log(linksObject)
+const linksObject = extractTheLinks(
+  // 'C:\\Users\\Usuario\\Documents\\LABORATORIA\\LIM015-md-links\\src\\File\\File2\\example2.md'
+  'C:\\Users\\Usuario\\Documents\\LABORATORIA\\LIM015-md-links\\src\\File\\File3\\example.md'
+  // 'C:\\Users\\Usuario\\Documents\\LABORATORIA\\LIM015-md-links\\src'
+  // 'C:\\Users\\Usuario\\Documents\\LABORATORIA\\LIM015-md-links\\README.md'
+)
+console.log(linksObject)
 
 // To validate the options
 const confirmOptions = (links) => {
@@ -102,12 +108,12 @@ const confirmOptions = (links) => {
 }
 // confirmOptions(linksObject)
 
-module.exports = {
-  tobeAbsolute,
-  resolvePathA,
-  pathExists,
-  findDirectory,
-  readFileAndDirectory,
-  extractTheLinks,
-  confirmOptions
-}
+// module.exports = {
+//   tobeAbsolute,
+//   resolvePathA,
+//   pathExists,
+//   findDirectory,
+//   readFileAndDirectory,
+//   extractTheLinks,
+//   confirmOptions
+// }
