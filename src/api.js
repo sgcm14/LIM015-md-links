@@ -38,7 +38,8 @@ const readFileAndDirectory = (route) => {
   }
   return newArray
 }
-// console.log(readFileAndDirectory(route))
+// console.log(readFileAndDirectory('C:\\Users\\Usuario\\Documents\\LABORATORIA\\LIM015-md-links\\src'))
+
 const lookFile = (route) => fs.readFileSync(route).toString()
 
 // To extract the links
@@ -51,7 +52,7 @@ const extractTheLinks = (route) => {
       const linkObj = {
         href: href,
         text: text,
-        file: route
+        file: file
       }
       arrayObj.push(linkObj)
     }
