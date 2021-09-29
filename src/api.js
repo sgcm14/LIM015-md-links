@@ -2,6 +2,7 @@ const path = require('path')
 const fs = require('fs')
 // const route = process.argv[2]
 const fetch = require('node-fetch')
+const marked = require('marked')
 
 // To convert the path to absolute
 const tobeAbsolute = (route) => path.isAbsolute(route)
@@ -38,41 +39,30 @@ const readFileAndDirectory = (route) => {
   return newArray
 }
 // console.log(readFileAndDirectory(route))
-// const lookFile = (route) =>
-//   fs.readFileSync(route, { encoding: "utf-8", flag: "r" })
-
+const lookFile = (route) => fs.readFileSync(route).toString()
 
 // To extract the links
 const extractTheLinks = (route) => {
-  const arrayLinks = []
-  const regExFile =
-    /\[(.*)\]( *)\(((((https?:\/\/)|(http?:\/\/)|(www\.))[^\s\n)]+)(?=\)))\)/gi
-  const regExCorchetes = /\[(.*?)\]/gi
-  const regExUrl = /(((https?:\/\/)|(http?:\/\/)|(www\.))[^\s\n)]+)(?=\))/gi
+  const arrayObj = []
+  const renderer = new marked.Renderer() // to cacth the information to pass html
   readFileAndDirectory(route).forEach((file) => {
-    const readFile = fs.readFileSync(file).toString()
-    const matchFile = readFile.match(regExFile)
-    if (matchFile != null) {
-      for (let i = 0; i < matchFile.length; i++) {
-        const text = matchFile[i]
-          .match(regExCorchetes)[0]
-          .replace('[', '')
-          .replace(']', '')
-        const href = matchFile[i].match(regExUrl)[0]
-        const linkObj = {
-          href,
-          text,
-          file
-        }
-        arrayLinks.push(linkObj)
+    const readFileMD = lookFile(file)
+    renderer.link = (href, title, text) => {
+      const linkObj = {
+        href: href,
+        text: text,
+        file: route
       }
+      arrayObj.push(linkObj)
     }
+    marked(readFileMD, { renderer })
   })
-  return arrayLinks
+  return arrayObj
 }
-const linksObject = extractTheLinks(
-  'C:\\Users\\Usuario\\Documents\\LABORATORIA\\LIM015-md-links\\src'
-)
+
+// const linksObject = extractTheLinks(
+//   'C:\\Users\\Usuario\\Documents\\LABORATORIA\\LIM015-md-links\\src'
+// )
 // console.log(linksObject)
 
 // To validate the options
@@ -82,7 +72,7 @@ const confirmOptions = (links) => {
       .then((response) => {
         const objResponse = {
           href: element.href,
-          text: (element.text.substring(0, 50)),
+          text: element.text.substring(0, 50),
           path: element.file,
           status: response.status,
           statusText:
@@ -93,7 +83,7 @@ const confirmOptions = (links) => {
       .catch((err) => {
         const objErr = {
           href: element.href,
-          text: (element.text.substring(0, 50)),
+          text: element.text.substring(0, 50),
           path: element.file,
           status: 'There was a problem with the Fetch request. ' + err,
           statusText: 'Fail'
@@ -101,11 +91,13 @@ const confirmOptions = (links) => {
         return objErr
       })
   })
-  return Promise.all(arrayPromise).then(response => {
-    console.log(response)
-  }).catch(err => {
-    console.log(err)
-  })
+  return Promise.all(arrayPromise)
+    .then((response) => {
+      console.log(response)
+    })
+    .catch((err) => {
+      console.log(err)
+    })
 }
 // confirmOptions(linksObject)
 
